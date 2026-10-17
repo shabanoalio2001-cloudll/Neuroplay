@@ -1,0 +1,439 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NeuroPlay | Neural Network Playground</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #101827;
+    color: #edf3ff;
+    line-height: 1.5;
+}
+
+header {
+    text-align: center;
+    padding: 30px 16px;
+    background: #192840;
+    border-bottom: 1px solid #34445f;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 34px;
+    color: #7dd3fc;
+}
+
+header p {
+    color: #c0cde0;
+    margin-bottom: 0;
+}
+
+main {
+    max-width: 950px;
+    margin: auto;
+    padding: 20px 14px 40px;
+}
+
+.card {
+    background: #1b2940;
+    border: 1px solid #354762;
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 18px;
+}
+
+h2 {
+    margin-top: 0;
+    color: #93c5fd;
+}
+
+.description {
+    color: #c0cde0;
+    font-size: 14px;
+}
+
+.controls {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 16px;
+}
+
+label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+}
+
+input, select {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #536783;
+    border-radius: 7px;
+    background: #101827;
+    color: white;
+    font-size: 16px;
+}
+
+button {
+    padding: 12px 18px;
+    border: 0;
+    border-radius: 8px;
+    background: #38bdf8;
+    color: #102033;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #7dd3fc;
+}
+
+.secondary {
+    background: #334862;
+    color: white;
+}
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.network {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 20px 0;
+}
+
+.neuron {
+    width: 145px;
+    min-height: 125px;
+    padding: 15px 8px;
+    border: 2px solid #60a5fa;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: #203b5b;
+    text-align: center;
+}
+
+.neuron.active {
+    border-color: #4ade80;
+    background: #164a43;
+    box-shadow: 0 0 18px #4ade8050;
+}
+
+.neuron strong {
+    font-size: 17px;
+}
+
+.neuron span {
+    font-size: 14px;
+}
+
+.connection {
+    text-align: center;
+    color: #fbbf24;
+    font-weight: bold;
+}
+
+.arrow {
+    font-size: 32px;
+}
+
+.results {
+    background: #101827;
+    padding: 15px;
+    border-radius: 9px;
+    overflow-wrap: anywhere;
+}
+
+.result-line {
+    padding: 7px 0;
+    border-bottom: 1px solid #354762;
+}
+
+.result-line:last-child {
+    border-bottom: 0;
+}
+
+.output {
+    font-size: 21px;
+    font-weight: bold;
+    color: #4ade80;
+}
+
+footer {
+    text-align: center;
+    color: #9aacc5;
+    font-size: 13px;
+    padding: 15px;
+}
+
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 28px;
+    }
+
+    .card {
+        padding: 15px;
+    }
+
+    .neuron {
+        width: 125px;
+        min-height: 110px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>NeuroPlay 🧠</h1>
+    <p>Explore how a simple artificial neural network works.</p>
+</header>
+
+<main>
+
+    <section class="card">
+        <h2>1. Network Settings</h2>
+        <p class="description">
+            Change the input, connection weights, and firing thresholds.
+            Then run your network.
+        </p>
+
+        <div class="controls">
+            <div>
+                <label for="input1">Input signal (0 or 1)</label>
+                <select id="input1">
+                    <option value="0">0 — No signal</option>
+                    <option value="1" selected>1 — Signal present</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="weight1">Weight to Neuron 1</label>
+                <input id="weight1" type="number"
+                       value="0.7" step="0.1">
+            </div>
+
+            <div>
+                <label for="threshold1">Neuron 1 threshold</label>
+                <input id="threshold1" type="number"
+                       value="0.5" step="0.1">
+            </div>
+
+            <div>
+                <label for="weight2">Weight to Neuron 2</label>
+                <input id="weight2" type="number"
+                       value="0.8" step="0.1">
+            </div>
+
+            <div>
+                <label for="threshold2">Neuron 2 threshold</label>
+                <input id="threshold2" type="number"
+                       value="0.5" step="0.1">
+            </div>
+        </div>
+
+        <div class="actions">
+            <button onclick="runNetwork()">▶ Run Network</button>
+            <button class="secondary" onclick="resetNetwork()">
+                Reset Values
+            </button>
+        </div>
+    </section>
+
+    <section class="card">
+        <h2>2. Visual Network</h2>
+        <p class="description">
+            Each neuron receives a signal, multiplies it by its weight,
+            and compares the total with its threshold.
+        </p>
+
+        <div class="network">
+            <div class="neuron" id="neuron1">
+                <strong>Neuron 1</strong>
+                <span id="visualInput1">Input: 1</span>
+                <span id="visualOutput1">Output: —</span>
+            </div>
+
+            <div class="connection">
+                <div class="arrow">→</div>
+                <span id="visualWeight">Weight: 0.8</span>
+            </div>
+
+            <div class="neuron" id="neuron2">
+                <strong>Neuron 2</strong>
+                <span id="visualInput2">Input: —</span>
+                <span id="visualOutput2">Output: —</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="card">
+        <h2>3. Results and Calculations</h2>
+
+        <div class="results" aria-live="polite">
+            <div class="result-line" id="result1">
+                Neuron 1: waiting to run.
+            </div>
+
+            <div class="result-line" id="result2">
+                Neuron 2: waiting to run.
+            </div>
+
+            <div class="result-line">
+                Final network output:
+                <span id="finalOutput" class="output">—</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="card">
+        <h2>4. Learn the Science</h2>
+        <p>
+            <strong>Weighted input:</strong>
+            signal × connection weight.
+        </p>
+        <p>
+            <strong>Threshold:</strong>
+            the minimum total needed for the neuron to output 1.
+        </p>
+        <p>
+            <strong>Binary output:</strong>
+            output is 1 if the total is greater than or equal to
+            the threshold; otherwise, output is 0.
+        </p>
+        <p class="description">
+            This is a simplified artificial neuron model, not a full
+            simulation of biological neurons or real brain activity.
+        </p>
+    </section>
+
+</main>
+
+<footer>
+    NeuroPlay 1.0 · Built for learning and experimentation 💙
+</footer>
+
+<script>
+function getNumber(id) {
+    const field = document.getElementById(id);
+    const value = field.value.trim();
+
+    if (value === "" || !Number.isFinite(Number(value))) {
+        throw new Error("Please enter a valid number in every field.");
+    }
+
+    return Number(value);
+}
+
+function runNetwork() {
+    try {
+        const input1 = getNumber("input1");
+        const weight1 = getNumber("weight1");
+        const threshold1 = getNumber("threshold1");
+        const weight2 = getNumber("weight2");
+        const threshold2 = getNumber("threshold2");
+
+        if (input1 !== 0 && input1 !== 1) {
+            throw new Error("Input signal must be 0 or 1.");
+        }
+
+        const total1 = input1 * weight1;
+        const output1 = total1 >= threshold1 ? 1 : 0;
+
+        const total2 = output1 * weight2;
+        const output2 = total2 >= threshold2 ? 1 : 0;
+
+        document.getElementById("visualInput1").textContent =
+            "Input: " + input1;
+
+        document.getElementById("visualOutput1").textContent =
+            "Output: " + output1;
+
+        document.getElementById("visualInput2").textContent =
+            "Input: " + output1;
+
+        document.getElementById("visualOutput2").textContent =
+            "Output: " + output2;
+
+        document.getElementById("visualWeight").textContent =
+            "Weight: " + weight2;
+
+        document.getElementById("neuron1").classList.toggle(
+            "active", output1 === 1
+        );
+
+        document.getElementById("neuron2").classList.toggle(
+            "active", output2 === 1
+        );
+
+        document.getElementById("result1").textContent =
+            "Neuron 1: " + input1 + " × " + weight1 +
+            " = " + total1 + "; threshold = " + threshold1 +
+            "; output = " + output1;
+
+        document.getElementById("result2").textContent =
+            "Neuron 2: " + output1 + " × " + weight2 +
+            " = " + total2 + "; threshold = " + threshold2 +
+            "; output = " + output2;
+
+        document.getElementById("finalOutput").textContent =
+            output2;
+
+    } catch (error) {
+        document.getElementById("result1").textContent =
+            error.message;
+        document.getElementById("result2").textContent = "";
+        document.getElementById("finalOutput").textContent = "—";
+    }
+}
+
+function resetNetwork() {
+    document.getElementById("input1").value = "1";
+    document.getElementById("weight1").value = "0.7";
+    document.getElementById("threshold1").value = "0.5";
+    document.getElementById("weight2").value = "0.8";
+    document.getElementById("threshold2").value = "0.5";
+
+    document.getElementById("result1").textContent =
+        "Neuron 1: waiting to run.";
+    document.getElementById("result2").textContent =
+        "Neuron 2: waiting to run.";
+    document.getElementById("finalOutput").textContent = "—";
+
+    document.getElementById("visualInput1").textContent = "Input: 1";
+    document.getElementById("visualOutput1").textContent = "Output: —";
+    document.getElementById("visualInput2").textContent = "Input: —";
+    document.getElementById("visualOutput2").textContent = "Output: —";
+    document.getElementById("visualWeight").textContent = "Weight: 0.8";
+
+    document.getElementById("neuron1").classList.remove("active");
+    document.getElementById("neuron2").classList.remove("active");
+}
+
+runNetwork();
+</script>
+
+</body>
+</html>
